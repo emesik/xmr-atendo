@@ -1,0 +1,5 @@
+{
+    "daemon_host" : "127.0.0.1",
+    "daemon_port" : 18081,
+    "db_url" : "sqlite:///mempool.db"
+}

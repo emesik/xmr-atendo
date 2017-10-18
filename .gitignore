@@ -1,0 +1,7 @@
+.*
+!.gitignore
+*.py[co]
+*.db
+*.swp
+*~
+__pycache__
