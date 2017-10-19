@@ -6,6 +6,7 @@ Base = declarative_base()
 
 class Txn(Base):
     __tablename__ = 'txn'
+    id = Column(Integer, primary_key=True)
     queried = Column(DateTime(timezone=False), nullable=False, index=True)
     received = Column(DateTime(timezone=False), nullable=False, index=True)
     fee = Column(Numeric(precision=12), nullable=False)
@@ -14,7 +15,7 @@ class Txn(Base):
     outputs = Column(Integer, nullable=False)
     ring = Column(Integer, nullable=False)
     version = Column(Integer, nullable=False)
-    hash_id = Column(String(64), nullable=False, primary_key=True)
+    hash_id = Column(String(64), nullable=False)
 
 
 def create_tables(url):
