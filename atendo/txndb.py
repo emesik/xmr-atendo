@@ -18,6 +18,13 @@ class Txn(Base):
     hash_id = Column(String(64), nullable=False)
 
 
+class TxnSum(Base):
+    __tablename__ = 'txnsum'
+    queried = Column(DateTime(timezone=False), primary_key=True)
+    fee = Column(Numeric(precision=12), nullable=False)
+    size = Column(Integer, nullable=False)
+
+
 def create_tables(url):
     engine = create_engine(url)
     Base.metadata.create_all(engine)
