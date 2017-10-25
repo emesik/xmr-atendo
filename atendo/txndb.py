@@ -18,11 +18,15 @@ class Txn(Base):
     hash_id = Column(String(64), nullable=False)
 
 
-class TxnSum(Base):
-    __tablename__ = 'txnsum'
+class TxnStat(Base):
+    __tablename__ = 'txnstat'
     queried = Column(DateTime(timezone=False), primary_key=True)
-    fee = Column(Numeric(precision=12), nullable=False)
-    size = Column(Integer, nullable=False)
+    txns = Column(Integer, nullable=False)
+    sumfee = Column(Numeric(precision=12), nullable=False)
+    sumsize = Column(Integer, nullable=False)
+    avgsize = Column(Integer, nullable=False)
+    avgfee = Column(Numeric(precision=12), nullable=False)
+    avgfeeperkb = Column(Numeric(precision=12), nullable=False)
 
 
 def create_tables(url):
