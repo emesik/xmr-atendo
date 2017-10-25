@@ -3,12 +3,9 @@ import json
 import sys
 from sqlalchemy.sql import func
 from atendo.txndb import Txn, TxnSum, mksession
+from atendo.utils import get_config_or_usage
 
-try:
-    config = json.loads(open(sys.argv[1], 'r').read())
-except Exception:
-    print("Usage: {0} <config.json>".format(*sys.argv), file=sys.stderr)
-    raise
+config = get_config_or_usage()
 
 s = mksession(config['db_url'])
 for (timestamp,) in s.query(Txn.queried).distinct().all():
