@@ -19,6 +19,7 @@ def write_json(label, data):
     tmpout = os.fdopen(tmpfd, 'w')
     simplejson.dump(data, tmpout, iterable_as_array=True)
     tmpout.close()
+    os.chmod(tmpname, 0o644)
     os.rename(tmpname, os.path.join(config['output_dir'], "{0}.json".format(label)))
 
 
