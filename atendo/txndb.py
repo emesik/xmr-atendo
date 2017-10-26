@@ -9,7 +9,7 @@ class Txn(Base):
     id = Column(Integer, primary_key=True)
     queried = Column(DateTime(timezone=False), nullable=False, index=True)
     received = Column(DateTime(timezone=False), nullable=False, index=True)
-    fee = Column(Numeric(precision=12), nullable=False)
+    fee = Column(Numeric(precision=24, scale=12), nullable=False)
     size = Column(Integer, nullable=False)
     inputs = Column(Integer, nullable=False)
     outputs = Column(Integer, nullable=False)
@@ -22,11 +22,11 @@ class TxnStat(Base):
     __tablename__ = 'txnstat'
     queried = Column(DateTime(timezone=False), primary_key=True)
     txns = Column(Integer, nullable=False)
-    sumfee = Column(Numeric(precision=12), nullable=False)
+    sumfee = Column(Numeric(precision=24, scale=12), nullable=False)
     sumsize = Column(Integer, nullable=False)
     avgsize = Column(Integer, nullable=False)
-    avgfee = Column(Numeric(precision=12), nullable=False)
-    avgfeeperkb = Column(Numeric(precision=12), nullable=False)
+    avgfee = Column(Numeric(precision=24, scale=12), nullable=False)
+    avgfeeperkb = Column(Numeric(precision=24, scale=12), nullable=False)
 
 
 def create_tables(url):
