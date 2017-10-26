@@ -4,6 +4,7 @@
 *.db
 *.json
 !example_config.json
+*.log
 *.swp
 *~
 __pycache__
