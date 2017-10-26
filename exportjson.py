@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import logging
 import os
 import re
 import simplejson
@@ -9,7 +10,8 @@ from atendo.query import Query
 from atendo.utils import get_config_or_usage
 
 config = get_config_or_usage()
-
+# TODO: log to file specified in config
+log = logging.getLogger()
 
 def write_json(label, data):
     tmpfd, tmpname = tempfile.mkstemp(
@@ -28,7 +30,15 @@ periods = {
 }
 q = Query(s, periods)
 for prop in ('txns', 'sumfee', 'sumsize', 'avgsize', 'avgfee', 'avgfeeperkb'):
-    write_json("timeline-{0}".format(prop), q.get_timeline(prop))
+    name = "timeline-{0}".format(prop)
+    try:
+        write_json(name, q.get_timeline(prop))
+    except Exception:
+        log.exception("Failed to generate timeline {0}".format(name))
 for period in periods.keys():
     for prop in ('inputs', 'outputs', 'ring', 'fee', 'size'):
-        write_json("hist-{0}-{1}".format(prop, period), q.get_hists(prop, period))
+        name = "hist-{0}-{1}".format(prop, period)
+        try:
+            write_json(name, q.get_hists(prop, period))
+        except Exception:
+            log.exception("Failed to generate histogram {0}".format(name))
