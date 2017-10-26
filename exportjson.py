@@ -10,7 +10,6 @@ from atendo.query import Query
 from atendo.utils import get_config_or_usage
 
 config = get_config_or_usage()
-logging.basicConfig(filename=config.get('log_file', None), level=logging.ERROR)
 log = logging.getLogger(sys.argv[0])
 
 def write_json(label, data):
