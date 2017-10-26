@@ -40,7 +40,7 @@ class Query(object):
 
     def timelinegen(self, key):
         for x in self._stats:
-            yield (int(x['queried'].timestamp()), x[key])
+            yield (int(x['queried'].timestamp() * 1000), x[key])
 
     def _mkhists(self, period):
         hists = {}
