@@ -18,16 +18,23 @@ class Atendo(object):
             'sumsize': 0
         }
         feesperkb = []
+        maxage = Decimal('-Infinity')
         for txdata in self.mempool.refresh():
             stat['txns'] += 1
             stat['sumfee'] += txdata['fee']
             stat['sumsize'] += txdata['size']
+            maxage = max(maxage, (now - txdata['received']).total_seconds())
             feesperkb.append(txdata['fee'] / (txdata['size'] / Decimal(1024)))
-            txn = Txn(queried=now, **txdata)
-            self.dbsession.add(txn)
-        stat['avgfee'] = (stat['sumfee'] / stat['txns']).quantize(PICONERO)
-        stat['avgsize'] = int(stat['sumsize'] / stat['txns'])
-        stat['avgfeeperkb'] = (sum(feesperkb) / len(feesperkb)).quantize(PICONERO)
+            if self.dbsession.query(Txn).filter(Txn.hash_id == txdata['hash_id']).count() == 0:
+                txn = Txn(queried=now, **txdata)
+                self.dbsession.add(txn)
+        if stat['txns'] > 0:
+            stat['avgfee'] = (stat['sumfee'] / stat['txns']).quantize(PICONERO)
+            stat['avgsize'] = int(stat['sumsize'] / stat['txns'])
+            stat['avgfeeperkb'] = (sum(feesperkb) / len(feesperkb)).quantize(PICONERO)
+        else:
+            stat['avgfee'] = stat['avgsize'] = stat['avgfeeperkb'] = 0
+        stat['maxage'] = maxage
         txnstat = TxnStat(queried=now, **stat)
         self.dbsession.add(txnstat)
         self.dbsession.commit()
