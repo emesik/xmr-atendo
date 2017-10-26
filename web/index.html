@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>XMR mempool</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+        <style>
+            h2 {
+                font-size: 120%;
+                margin-top: 30px;
+            }
+            .plot-wrapper {
+                border: 1px solid #4c4c4c;
+                padding: 10px;
+            }
+            .plot {
+                height: 300px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1>XMR mempool</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h2>Number of transactions in the mempool</h2>
+                    <div class="plot-wrapper"><div id="txns" class="plot"></div></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h2>Total size and fee of transactions in the mempool</h2>
+                    <div class="plot-wrapper"><div id="totals" class="plot"></div></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>Average size and fee of transaction</h2>
+                    <div class="plot-wrapper"><div id="averages" class="plot"></div></div>
+                </div>
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.time.js"></script>
+        <script src="memplots.js"></script>
+        <script>
+            $(document).ready(function() {
+                drawTimelines('/xmr/', $('#txns'), $('#totals'), $('#averages'));
+            });
+        </script>
+    </body>
+</html>
