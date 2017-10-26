@@ -72,6 +72,10 @@ class Query(object):
             txns, 'inputs', range(stats.mininputs, stats.maxinputs + 1))
         hists['outputs'] = self._mkhist_int(
             txns, 'outputs', range(stats.minoutputs, stats.maxoutputs + 1))
+        hists['fee'] = self._mkhist_range(
+            txns, 'fee', stats.minfee, stats.maxfee, 20)
+        hists['size'] = self._mkhist_range(
+            txns, 'size', stats.minsize, stats.maxsize, 20)
         return hists
 
     def _mkhist_int(self, txns, key, bins):
@@ -79,3 +83,15 @@ class Query(object):
         for txn in txns:
             buckets[getattr(txn, key)] += 1
         return sorted(buckets.items(), key=operator.itemgetter(0))
+
+    def _mkhist_range(self, txns, key, minval, maxval, bins):
+        step = (maxval - minval) / bins
+        if step == 0:
+            return {'min': minval, 'max': maxval, 'step': step, 'data': []}
+        buckets = [0] * bins
+        for txn in txns:
+            val = getattr(txn,key)
+            # int() rounds down
+            b = int((val - minval) / step)
+            buckets[min(b, bins-1)] += 1
+        return {'min': minval, 'max': maxval, 'step': step, 'data': buckets}
