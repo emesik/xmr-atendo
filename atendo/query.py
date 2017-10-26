@@ -45,20 +45,13 @@ class Query(object):
     def _mkhists(self, period):
         hists = {}
         hash_ids = set()
-        txns = self.dbsession.query(Txn) \
+        txnq = self.dbsession.query(Txn) \
             .filter(Txn.queried > self.when - timedelta(seconds=period)) \
             .order_by(Txn.queried)
 
-        if txns.count() == 0:
+        if txnq.count() == 0:
             return hists
-
-        # keep only one copy of each Txn, the first-seen one
-        unique_txns = []
-        for txn in txns.all():
-            if txn.hash_id in hash_ids:
-                continue
-            hash_ids.add(txn.hash_id)
-            unique_txns.append(txn)
+        txns = txnq.all()
 
         stats = self.dbsession.query(
                 func.min(Txn.fee).label('minfee'),
@@ -73,19 +66,16 @@ class Query(object):
                 func.max(Txn.ring).label('maxring')) \
             .filter(Txn.queried > self.when - timedelta(seconds=period)).one()
 
-        hists['ring'] = self._mkhist(
-            unique_txns,
-            'ring',
-            range(stats.minring, stats.maxring + 1))
-        hists['inputs'] = self._mkhist(
-            unique_txns,
-            'inputs',
-            range(stats.mininputs, stats.maxinputs + 1))
-        hists['outputs'] = self._mkhist(
-            unique_txns,
-            'outputs',
-            range(stats.minoutputs, stats.maxoutputs + 1))
+        hists['ring'] = self._mkhist_int(
+            txns, 'ring', range(stats.minring, stats.maxring + 1))
+        hists['inputs'] = self._mkhist_int(
+            txns, 'inputs', range(stats.mininputs, stats.maxinputs + 1))
+        hists['outputs'] = self._mkhist_int(
+            txns, 'outputs', range(stats.minoutputs, stats.maxoutputs + 1))
         return hists
 
-    def _mkhist(self, txns, key, bins):
-        return []
+    def _mkhist_int(self, txns, key, bins):
+        buckets = { k: 0 for k in bins }
+        for txn in txns:
+            buckets[getattr(txn, key)] += 1
+        return sorted(buckets.items(), key=operator.itemgetter(0))
