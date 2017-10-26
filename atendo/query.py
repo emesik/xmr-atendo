@@ -6,6 +6,7 @@ from .txndb import Txn, TxnStat
 
 class Query(object):
     when = None
+    _stats = None
 
     def __init__(self, dbsession, periods=(60*60, 60*60*24, 60*60*24*7)):
         self.dbsession = dbsession
@@ -24,4 +25,6 @@ class Query(object):
             yield (int(x['queried'].timestamp()), x[key])
 
     def get_timeline(self, prop):
+        if not self._stats:
+            self.fetch_stats()
         return {'timestamp': self.when, 'data': self.timelinegen(prop)}
