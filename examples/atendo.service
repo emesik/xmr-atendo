@@ -1,0 +1,10 @@
+[Unit]
+Description=XMR mempool data fetch
+
+[Service]
+Type=simple
+WorkingDirectory=/srv/xmr-atendo
+ExecStart=/srv/xmr-atendo/getmempool.py /srv/xmr-atendo/config.json
+
+[Install]
+WantedBy=multi-user.target
