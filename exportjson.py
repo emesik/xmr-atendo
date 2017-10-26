@@ -10,8 +10,8 @@ from atendo.query import Query
 from atendo.utils import get_config_or_usage
 
 config = get_config_or_usage()
-# TODO: log to file specified in config
-log = logging.getLogger()
+logging.basicConfig(filename=config.get('log_file', None), level=logging.ERROR)
+log = logging.getLogger(sys.argv[0])
 
 def write_json(label, data):
     tmpfd, tmpname = tempfile.mkstemp(
@@ -26,7 +26,7 @@ s = mksession(config['db_url'])
 periods = {
     '1h': 60 * 60,
     '1d': 60 * 60 * 24,
-#    '1w': 60 * 60 * 24 * 7
+    '1w': 60 * 60 * 24 * 7
 }
 q = Query(s, periods)
 for prop in ('txns', 'sumfee', 'sumsize', 'avgsize', 'avgfee', 'avgfeeperkb'):
@@ -34,11 +34,11 @@ for prop in ('txns', 'sumfee', 'sumsize', 'avgsize', 'avgfee', 'avgfeeperkb'):
     try:
         write_json(name, q.get_timeline(prop))
     except Exception:
-        log.exception("Failed to generate timeline {0}".format(name))
+        log.exception("Failed to generate {0}".format(name))
 for period in periods.keys():
     for prop in ('inputs', 'outputs', 'ring', 'fee', 'size'):
         name = "hist-{0}-{1}".format(prop, period)
         try:
             write_json(name, q.get_hists(prop, period))
         except Exception:
-            log.exception("Failed to generate histogram {0}".format(name))
+            log.exception("Failed to generate {0}".format(name))
