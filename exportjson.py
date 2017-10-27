@@ -23,11 +23,13 @@ def write_json(label, data):
 
 
 s = mksession(config['db_url'])
-periods = {
-    '1h': 60 * 60,
-    '1d': 60 * 60 * 24,
-    '1w': 60 * 60 * 24 * 7
-}
+try:
+    periods = config['exportjson']['periods']
+except KeyError:
+    periods = {
+        '1h': 60 * 60,
+        '1d': 60 * 60 * 24
+    }
 q = Query(s, periods)
 for prop in ('txns', 'sumfee', 'sumsize', 'avgsize', 'avgfee', 'avgfeeperkb'):
     name = "timeline-{0}".format(prop)
