@@ -1,0 +1,45 @@
+html {
+  background-color: #fff1e7;
+  color: #2f1300;
+  font-face: sans-serif;
+  font-size: 12pt;
+}
+h2 {
+  font-size: 120%;
+  margin-top: 30px;
+}
+.plot-wrapper {
+  border: 1px solid #4c4c4c;
+  padding: 10px;
+}
+.plot {
+  height: 400px;
+}
+.xmraddr {
+  font-size: 8pt;
+  font-family: monospace;
+  word-wrap: break-word;
+  color: #0062a3;
+}
+.logo .xmr {
+  color: #ff6600;
+}
+.logo .lab {
+  color: #4c4c4c;
+}
+img.qr {
+  width: 200px;
+  height: 200px;
+}
+img.qr.small {
+  width: 120px;
+  height: 120px;
+}
+#footer {
+  margin-top: 60px;
+  padding-bottom: 30px;
+}
+#footer img {
+  margin-right: 20px;
+  margin-bottom: 20px;
+}

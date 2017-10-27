@@ -1,0 +1,52 @@
+@glow:      rgba(255, 102, 0, 1);
+@afterglow: rgba(76, 76, 76, 1);
+@link:      rgba(0, 98, 163, 1);
+@text:      rgba(47, 19, 0, 1);
+@textbg:    rgba(255, 241, 231, 1);
+html {
+    background-color: @textbg;
+    color: @text;
+    font-face: sans-serif;
+    font-size: 12pt;
+}
+h2 {
+    font-size: 120%;
+    margin-top: 30px;
+}
+.plot-wrapper {
+    border: 1px solid @afterglow;
+    padding: 10px;
+}
+.plot {
+    height: 400px;
+}
+.xmraddr {
+    font-size: 8pt;
+    font-family: monospace;
+    word-wrap: break-word;
+    color: @link;
+}
+.logo {
+    .xmr {
+        color: @glow;
+    }
+    .lab {
+        color: @afterglow;
+    }
+}
+img.qr  {
+    width: 200px;
+    height: 200px;
+    &.small {
+        width: 120px;
+        height: 120px;
+    }
+}
+#footer {
+    margin-top: 60px;
+    padding-bottom: 30px;
+    img {
+        margin-right: 20px;
+        margin-bottom: 20px;
+    }
+}

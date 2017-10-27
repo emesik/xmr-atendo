@@ -5,28 +5,23 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-        <style>
-            h2 {
-                font-size: 120%;
-                margin-top: 30px;
-            }
-            .plot-wrapper {
-                border: 1px solid #4c4c4c;
-                padding: 10px;
-            }
-            .plot {
-                height: 400px;
-            }
-        </style>
+        <link rel="stylesheet" href="styles.css" />
     </head>
     <body>
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <h1>XMR mempool</h1>
-                    <p>
-                    Transactions sent from wallets enter <em>mempool</em> where they await to be signed into a new block.
-                    </p>
+                    <h1><span class="logo"><span class="xmr">XMR</span><span class="lab">lab</span></span> — Monero mempool</h1>
+                    <p><small>
+                    Transactions sent from wallets enter mempool where they await to be signed into a new block.
+                    A new block is being mined every 2 minutes on average and its creation is visible on the graphs
+                    as rapid drop in the mempool size.
+                    </small></p>
+                    <p><small>
+                    Each transaction has a fee, which depends on the priority of the transaction set by its sender.
+                    The fee is an incentive for miners to include transactions in freshly mined blocks. The miner
+                    who does it, gets the fees.
+                    </small></p>
                 </div>
             </div>
             <div class="row">
@@ -42,15 +37,25 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-12">
                     <h2>Average size and fee of transaction</h2>
                     <div class="plot-wrapper"><div id="averages" class="plot"></div></div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-12">
                     <h2>Average fee per kB</h2>
                     <div class="plot-wrapper"><div id="perkb" class="plot"></div></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12" id="footer">
+                    <img class="qr small float-left" src="qrcode-mempool.png"
+                        alt="4DHKLPmWW8aBoEbSyzKVbbDRmc8nsnpZLUpQBYvhUxs3KVrodnaFaBEQMDp69u4VaiEG3LSQXA6M61mXPrztCLuhANHcFpVzv5CDHpmdvF" />
+                    <p class="float-left">
+                    Like the graphs? Please donate!<br />
+                    <small class="xmraddr">4DHKLPmWW8aBoEbSyzKVbbDRmc8nsnpZLUpQBYvhUxs3KVrodnaFaBEQMDp69u4VaiEG3LSQXA6M61mXPrztCLuhANHcFpVzv5CDHpmdvF</small>
+                    </p>
                 </div>
             </div>
         </div>
