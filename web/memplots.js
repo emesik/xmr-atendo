@@ -14,13 +14,15 @@ function drawTimelines(rootUrl, txns, totals, averages, perkbs) {
 
   var colors = ['#ff6600', '#4c4c4c', '#0099ff'];
   var labelWidth = 48;
+  var xAxisOptions = {
+    mode: 'time',
+    minTickSize: [1, "hour"]
+  };
   var plotOptions = {
     txns: {
       colors: colors,
-      xaxis: {
-        mode: 'time',
-        minTickSize: [1, "hour"]
-      },
+      grid: { hoverable: true },
+      xaxis: xAxisOptions,
       yaxes: [
         {
           reserveSpace: true,
@@ -35,10 +37,8 @@ function drawTimelines(rootUrl, txns, totals, averages, perkbs) {
     },
     sizesFees: {
       colors: colors,
-      xaxes: [{
-        mode: 'time',
-        minTickSize: [1, "hour"]
-      }],
+      grid: { hoverable: true },
+      xaxis: xAxisOptions,
       yaxes: [
         {
           min: 0,
@@ -57,10 +57,8 @@ function drawTimelines(rootUrl, txns, totals, averages, perkbs) {
     },
     perKbs: {
       colors: colors,
-      xaxis: {
-        mode: 'time',
-        minTickSize: [1, "hour"]
-      },
+      grid: { hoverable: true },
+      xaxis: xAxisOptions,
       yaxes: [
         {
           reserveSpace: true,
@@ -78,12 +76,30 @@ function drawTimelines(rootUrl, txns, totals, averages, perkbs) {
     }
   };
 
+  $('<div id="tooltip"></div>').appendTo($('body'));
+
   [txns, totals, averages, perkbs].forEach(function(e) {
     e.parent().resizable({
       minWidth: 300,
       maxWidth: 1200,
       minHeight: 300,
       maxHeight: 400
+    });
+    e.bind('plothover', function onPlotHover(evt, pos, item) {
+      var date, val;
+      if (!item) {
+        $('#tooltip').hide();
+        return;
+      }
+      date = new Date(item.datapoint[0]).toUTCString();
+      val = item.series.yaxis.tickFormatter(item.datapoint[1], item.series.yaxis);
+      $("#tooltip").html('<span class="value">' + val + '</span><span class="date">' + date + '</span>')
+        .css({
+          top: item.pageY - 55,
+          left: item.pageX + 5,
+          'border-color': item.series.color
+        });
+      $('#tooltip').show();
     });
   });
 

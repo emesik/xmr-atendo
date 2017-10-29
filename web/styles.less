@@ -20,6 +20,22 @@ h2 {
 .plot {
     height: 400px;
 }
+#tooltip {
+    position: absolute;
+    display: none;
+    border: 3px solid transparent;
+    border-radius: 4px;
+    padding: 2px;
+    background-color: @textbg;
+    opacity: 0.9;
+    .date {
+      display: block;
+      font-size: 8pt;
+    }
+    .value {
+      display: block;
+    }
+}
 .xmraddr {
     font-size: 8pt;
     font-family: monospace;

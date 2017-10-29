@@ -15,6 +15,22 @@ h2 {
 .plot {
   height: 400px;
 }
+#tooltip {
+  position: absolute;
+  display: none;
+  border: 3px solid transparent;
+  border-radius: 4px;
+  padding: 2px;
+  background-color: #fff1e7;
+  opacity: 0.9;
+}
+#tooltip .date {
+  display: block;
+  font-size: 8pt;
+}
+#tooltip .value {
+  display: block;
+}
 .xmraddr {
   font-size: 8pt;
   font-family: monospace;
