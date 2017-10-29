@@ -11,25 +11,71 @@ function drawTimelines(rootUrl, txns, totals, averages, perkbs) {
     averages: null,
     perkbs: null
   };
-  var colors = ['#ff6600', '#0099ff', '#4c4c4c'];
-  var sizeFeeOptions = {
-    colors: colors,
-    xaxes: [{
-      mode: 'time',
-      minTickSize: [1, "hour"]
-    }],
-    yaxes: [
-      {
-        min: 0,
-        tickFormatter: kBFormatter
-      }, {
-        min: 0,
-        position: 'right',
-        alignTickWithAxis: 1,
-        tickFormatter: xmrFormatter
-      }
-    ],
-    legend: { position: 'nw' }
+
+  var colors = ['#ff6600', '#4c4c4c', '#0099ff'];
+  var labelWidth = 48;
+  var plotOptions = {
+    txns: {
+      colors: colors,
+      xaxis: {
+        mode: 'time',
+        minTickSize: [1, "hour"]
+      },
+      yaxes: [
+        {
+          reserveSpace: true,
+          labelWidth: labelWidth
+        },
+        {
+          position: 'right',
+          reserveSpace: true,
+          labelWidth: labelWidth
+        }
+      ]
+    },
+    sizesFees: {
+      colors: colors,
+      xaxes: [{
+        mode: 'time',
+        minTickSize: [1, "hour"]
+      }],
+      yaxes: [
+        {
+          min: 0,
+          reserveSpace: true,
+          labelWidth: labelWidth,
+          tickFormatter: kBFormatter
+        }, {
+          min: 0,
+          position: 'right',
+          reserveSpace: true,
+          labelWidth: labelWidth,
+          tickFormatter: xmrFormatter
+        }
+      ],
+      legend: { position: 'nw' }
+    },
+    perKbs: {
+      colors: colors,
+      xaxis: {
+        mode: 'time',
+        minTickSize: [1, "hour"]
+      },
+      yaxes: [
+        {
+          reserveSpace: true,
+          labelWidth: labelWidth
+        },
+        {
+          min: 0,
+          position: 'right',
+          labelWidth: labelWidth,
+          reserveSpace: true,
+          tickFormatter: mxmrFormatter
+        }
+      ],
+      legend: { position: 'nw' }
+    }
   };
 
   [txns, totals, averages, perkbs].forEach(function(e) {
@@ -46,13 +92,7 @@ function drawTimelines(rootUrl, txns, totals, averages, perkbs) {
     url: rootUrl + 'timeline-txns.json',
     success: function(result) {
       data.txns.push(result.data);
-      plots.txns = txns.plot(data.txns, {
-        colors: colors,
-        xaxis: {
-          mode: 'time',
-          minTickSize: [1, "hour"]
-        }
-      });
+      plots.txns = txns.plot(data.txns, plotOptions.txns);
     }
   });
 
@@ -80,7 +120,7 @@ function drawTimelines(rootUrl, txns, totals, averages, perkbs) {
   });
   $.when(t1, t2).done(function() {
     data.totals.sort(cmpIndex);
-    plots.totals = totals.plot(data.totals, sizeFeeOptions);
+    plots.totals = totals.plot(data.totals, plotOptions.sizesFees);
   });
 
   // averages
@@ -107,7 +147,7 @@ function drawTimelines(rootUrl, txns, totals, averages, perkbs) {
   });
   $.when(a1, a2).done(function() {
     data.averages.sort(cmpIndex);
-    plots.averages = averages.plot(data.averages, sizeFeeOptions);
+    plots.averages = averages.plot(data.averages, plotOptions.sizesFees);
   });
 
   // per kB
@@ -120,31 +160,21 @@ function drawTimelines(rootUrl, txns, totals, averages, perkbs) {
         data: result.data,
         index: 10
       });
-      plots.perkbs = perkbs.plot(data.perkbs, {
-        colors: colors,
-        xaxis: {
-          mode: 'time',
-          minTickSize: [1, "hour"]
-        },
-        yaxis: {
-          min: 0,
-          position: 'right',
-          tickFormatter: mxmrFormatter
-        },
-        legend: { position: 'nw' }
-      });
+      plots.perkbs = perkbs.plot(data.perkbs, plotOptions.perKbs);
     }
   });
 
+  setTimeout(function() { drawTimelines(rootUrl, txns, totals, averages, perkbs); }, 120000);
+
   // functions
   function xmrFormatter(v) {
-    if (Math.abs(v) < 0.01) return '0 XMR';
-    return v.toFixed(2) + ' XMR';
+    if (Math.abs(v) < 0.01) return '0 ɱ';
+    return v.toFixed(2) + ' ɱ';
   }
 
   function mxmrFormatter(v) {
-    if (Math.abs(v) < 0.00001) return '0 mXMR';
-    return (v * 1000).toFixed(1) + ' mXMR';
+    if (Math.abs(v) < 0.00001) return '0 mɱ';
+    return (v * 1000).toFixed(1) + ' mɱ';
   }
 
   function kBFormatter(v) {
