@@ -16,7 +16,7 @@ function drawTimelines(rootUrl, txns, totals, averages, perkbs) {
   var labelWidth = 48;
   var xAxisOptions = {
     mode: 'time',
-    minTickSize: [1, "hour"]
+    minTickSize: [txns.width() > 500 ? 2 : 6, 'hour']
   };
   var plotOptions = {
     txns: {
