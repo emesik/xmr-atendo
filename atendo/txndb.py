@@ -24,8 +24,8 @@ class TxnStat(Base):
     sumfee = Column(Numeric(precision=24, scale=12), nullable=False)
     sumsize = Column(Integer, nullable=False)
     avgsize = Column(Integer, nullable=False)
-    avgfee = Column(Numeric(precision=24, scale=12), nullable=False)
-    avgfeeperkb = Column(Numeric(precision=24, scale=12), nullable=False)
+    avgfee = Column(Numeric(precision=24, scale=12), nullable=True)
+    avgfeeperkb = Column(Numeric(precision=24, scale=12), nullable=True)
     maxage = Column(Numeric(precision=16, scale=8), nullable=False)
 
 

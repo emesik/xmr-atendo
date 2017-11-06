@@ -1,206 +1,191 @@
-function drawTimelines(rootUrl, txns, totals, averages, perkbs) {
-  var data = {
-    txns: [],
-    totals: [],
-    averages: [],
-    perkbs: []
-  };
-  var plots = {
-    txns: null,
-    totals: null,
-    averages: null,
-    perkbs: null
-  };
+function drawTimeline(el, graphs, options) {
 
+  el.parent().resizable({
+    minWidth: 300,
+    maxWidth: 1200,
+    minHeight: 300,
+    maxHeight: 400
+  });
+  el.bind('plothover', function onPlotHover(evt, pos, item) {
+    var date;
+    var tstamp;
+    var vals = [];
+    var yaxis;
+    var gr;
+    var dat;
+    var val;
+    if (!item) {
+      $('#tooltip').hide();
+      return;
+    }
+    tstamp = item.datapoint[0];
+    date = new Date(tstamp).toUTCString();
+    for (var i = 0; i < graphs.length; i++) {
+      gr = graphs[i];
+      dat = gr.dataset.data;
+      yaxis = options.yaxes[(gr.yaxis || 1) - 1];
+      val = null;
+      for (var j = 0; j < dat.length; j++) {
+        if (dat[j][0] == tstamp) {
+          val = dat[j][1];
+          break;
+        }
+      }
+      if (val != null) {
+        vals.push(yaxis.tickFormatter ? yaxis.tickFormatter(dat[j][1], yaxis) : dat[j][1]);
+      } else {
+        vals.push('—');
+      }
+    }
+    $("#tooltip").html('<span class="value">' + vals.join('/') + '</span><span class="date">' + date + '</span>')
+      .css({
+        top: item.pageY - 55,
+        left: item.pageX + 5
+      });
+    $('#tooltip').show();
+  });
+
+  fetchAndPlot();
+  setTimeout(fetchAndPlot, 120000);
+
+  function fetchAndPlot() {
+    var promises = [];
+    var p;
+
+    graphs.forEach(function(gr) {
+      p = $.ajax({
+        url: gr.url,
+        success: function onDataRcv(result) {
+          gr.dataset = {
+            label: gr.label,
+            index: gr.index,
+            yaxis: gr.yaxis,
+            data: result.data
+          };
+        }
+      });
+      promises.push(p);
+    });
+
+    $.when.apply($, promises).done(function onAllDataRcv() {
+      var datasets = [];
+      graphs.forEach(function(gr) { datasets.push(gr.dataset); });
+      datasets.sort(cmpIndex);
+      el.plot(datasets, options);
+    });
+    setTimeout(fetchAndPlot, 120000);
+  }
+}
+
+function drawTimelines(rootUrl) {
   var colors = ['#ff6600', '#4c4c4c', '#0099ff'];
   var labelWidth = 48;
   var xAxisOptions = {
     mode: 'time',
-    minTickSize: [txns.width() > 500 ? 2 : 6, 'hour']
+    minTickSize: [$(document).width() > 500 ? 2 : 6, 'hour']
   };
-  var plotOptions = {
-    txns: {
-      colors: colors,
-      grid: { hoverable: true },
-      xaxis: xAxisOptions,
-      yaxes: [
-        {
-          reserveSpace: true,
-          labelWidth: labelWidth
-        },
-        {
-          position: 'right',
-          reserveSpace: true,
-          labelWidth: labelWidth
-        }
-      ]
-    },
-    sizesFees: {
-      colors: colors,
-      grid: { hoverable: true },
-      xaxis: xAxisOptions,
-      yaxes: [
-        {
-          min: 0,
-          reserveSpace: true,
-          labelWidth: labelWidth,
-          tickFormatter: kBFormatter
-        }, {
-          min: 0,
-          position: 'right',
-          reserveSpace: true,
-          labelWidth: labelWidth,
-          tickFormatter: xmrFormatter
-        }
-      ],
-      legend: { position: 'nw' }
-    },
-    perKbs: {
-      colors: colors,
-      grid: { hoverable: true },
-      xaxis: xAxisOptions,
-      yaxes: [
-        {
-          reserveSpace: true,
-          labelWidth: labelWidth
-        },
-        {
-          min: 0,
-          position: 'right',
-          labelWidth: labelWidth,
-          reserveSpace: true,
-          tickFormatter: mxmrFormatter
-        }
-      ],
-      legend: { position: 'nw' }
-    }
-  };
-
-  $('<div id="tooltip"></div>').appendTo($('body'));
-
-  [txns, totals, averages, perkbs].forEach(function(e) {
-    e.parent().resizable({
-      minWidth: 300,
-      maxWidth: 1200,
-      minHeight: 300,
-      maxHeight: 400
-    });
-    e.bind('plothover', function onPlotHover(evt, pos, item) {
-      var date, val;
-      if (!item) {
-        $('#tooltip').hide();
-        return;
+  var twoAxisOpts = {
+    colors: colors,
+    grid: { hoverable: true },
+    xaxis: xAxisOptions,
+    yaxes: [
+      {
+        min: 0,
+        reserveSpace: true,
+        labelWidth: labelWidth,
+        tickFormatter: kBFormatter
+      }, {
+        min: 0,
+        position: 'right',
+        reserveSpace: true,
+        labelWidth: labelWidth,
+        tickFormatter: xmrFormatter
       }
-      date = new Date(item.datapoint[0]).toUTCString();
-      val = item.series.yaxis.tickFormatter(item.datapoint[1], item.series.yaxis);
-      $("#tooltip").html('<span class="value">' + val + '</span><span class="date">' + date + '</span>')
-        .css({
-          top: item.pageY - 55,
-          left: item.pageX + 5,
-          'border-color': item.series.color
-        });
-      $('#tooltip').show();
-    });
-  });
+    ],
+    legend: { position: 'nw' }
+  };
 
-  // txns
-  $.ajax({
-    url: rootUrl + 'timeline-txns.json',
-    success: function(result) {
-      data.txns.push(result.data);
-      plots.txns = txns.plot(data.txns, plotOptions.txns);
-    }
-  });
+  drawTimeline(
+    $('#txns'),
+    [ { url: rootUrl + 'timeline-txns.json' } ],
+    { colors: colors,
+      grid: { hoverable: true },
+      xaxis: xAxisOptions,
+      yaxes: [
+        { reserveSpace: true,
+          labelWidth: labelWidth },
+        { position: 'right',
+          reserveSpace: true,
+          labelWidth: labelWidth }]});
 
-  // totals
-  var t1 = $.ajax({
-    url: rootUrl + 'timeline-sumsize.json',
-    success: function(result) {
-      data.totals.push({
+  drawTimeline(
+    $('#totals'),
+    [ { url: rootUrl + 'timeline-sumsize.json',
         label: 'Mempool size',
-        data: result.data,
-        index: 10
-      });
-    }
-  });
-  var t2 = $.ajax({
-    url: rootUrl + 'timeline-sumfee.json',
-    success: function(result) {
-      data.totals.push({
+        index: 10 },
+      { url: rootUrl + 'timeline-sumfee.json',
         label: 'Total fees',
         yaxis: 2,
-        data: result.data,
-        index: 20
-      });
-    }
-  });
-  $.when(t1, t2).done(function() {
-    data.totals.sort(cmpIndex);
-    plots.totals = totals.plot(data.totals, plotOptions.sizesFees);
-  });
+        index: 20 } ],
+    twoAxisOpts);
 
-  // averages
-  var a1 = $.ajax({
-    url: rootUrl + 'timeline-avgsize.json',
-    success: function(result) {
-      data.averages.push({
+  drawTimeline(
+    $('#averages'),
+    [ { url: rootUrl + 'timeline-avgsize.json',
         label: 'Avg txn size',
-        data: result.data,
-        index: 10
-      });
-    }
-  });
-  var a2 = $.ajax({
-    url: rootUrl + 'timeline-avgfee.json',
-    success: function(result) {
-      data.averages.push({
+        index: 10 },
+      { url: rootUrl + 'timeline-avgfee.json',
         label: 'Avg txn fee',
         yaxis: 2,
-        data: result.data,
-        index: 20,
-      });
-    }
-  });
-  $.when(a1, a2).done(function() {
-    data.averages.sort(cmpIndex);
-    plots.averages = averages.plot(data.averages, plotOptions.sizesFees);
-  });
+        index: 20 } ],
+    twoAxisOpts);
 
-  // per kB
-  $.ajax({
-    url: rootUrl + 'timeline-avgfeeperkb.json',
-    success: function(result) {
-      data.perkbs.push({
+  drawTimeline(
+    $('#perkb'),
+    [ { url: rootUrl + 'timeline-avgfeeperkb.json',
         label: 'Avg fee per kB',
         yaxis: 2,
-        data: result.data,
-        index: 10
-      });
-      plots.perkbs = perkbs.plot(data.perkbs, plotOptions.perKbs);
+        index: 10 }],
+    { colors: colors,
+      grid: { hoverable: true },
+      xaxis: xAxisOptions,
+      yaxes: [ {
+          reserveSpace: true,
+          labelWidth: labelWidth },
+        { min: 0,
+          position: 'right',
+          labelWidth: labelWidth,
+          reserveSpace: true,
+          tickFormatter: xmrFormatter }],
+      legend: { position: 'nw' }});
+
+  $('<div id="tooltip"></div>').appendTo($('body'));
+}
+
+// functions
+function xmrFormatter(v) {
+  if (Math.abs(v) < 1) {
+    if (Math.abs(v) < 0.001) {
+      if (Math.abs(v) < 0.000001) {
+        if (Math.abs(v) < 0.000000001) {
+          return (v * 1000000000000).toFixed(0) + ' pɱ';
+        }
+        return (v * 1000000000).toFixed(0) + ' nɱ';
+      }
+      return (v * 1000000).toFixed(0) + ' µɱ';
     }
-  });
-
-  setTimeout(function() { drawTimelines(rootUrl, txns, totals, averages, perkbs); }, 120000);
-
-  // functions
-  function xmrFormatter(v) {
-    if (Math.abs(v) < 0.01) return '0 ɱ';
-    return v.toFixed(2) + ' ɱ';
+    return (v * 1000).toFixed(0) + ' mɱ';
   }
+  return v.toFixed(2) + ' ɱ';
+}
 
-  function mxmrFormatter(v) {
-    if (Math.abs(v) < 0.00001) return '0 mɱ';
-    return (v * 1000).toFixed(1) + ' mɱ';
-  }
+function kBFormatter(v) {
+  var kb = v / 1024.0;
+  if (Math.abs(v) < 0.1) return '0 kB';
+  if (kb > 1024) return (kb / 1024.0).toFixed(1) + ' MB';
+  return kb.toFixed(kb >= 100 ? 0 : 1) + ' kB';
+}
 
-  function kBFormatter(v) {
-    var kb = v / 1024.0;
-    if (Math.abs(v) < 0.1) return '0 kB';
-    if (kb > 1024) return (kb / 1024.0).toFixed(1) + ' MB';
-    return kb.toFixed(kb >= 100 ? 0 : 1) + ' kB';
-  }
-
-  function cmpIndex(a, b) {
-    return (a.index - b.index) || 0;
-  }
+function cmpIndex(a, b) {
+  return (a.index - b.index) || 0;
 }

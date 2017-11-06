@@ -33,7 +33,8 @@ class Atendo(object):
             stat['avgsize'] = int(stat['sumsize'] / stat['txns'])
             stat['avgfeeperkb'] = (sum(feesperkb) / len(feesperkb)).quantize(PICONERO)
         else:
-            stat['avgfee'] = stat['avgsize'] = stat['avgfeeperkb'] = 0
+            stat['avgfee'] = stat['avgfeeperkb'] = None
+            stat['avgsize'] = 0
         stat['maxage'] = maxage
         txnstat = TxnStat(queried=now, **stat)
         self.dbsession.add(txnstat)
