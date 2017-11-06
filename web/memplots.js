@@ -164,17 +164,18 @@ function drawTimelines(rootUrl) {
 
 // functions
 function xmrFormatter(v) {
-  if (Math.abs(v) < 1) {
+  if (Math.abs(v) < 0.000000000001) return '0 ɱ';
+  if (Math.abs(v) < 0.01) {
     if (Math.abs(v) < 0.001) {
       if (Math.abs(v) < 0.000001) {
         if (Math.abs(v) < 0.000000001) {
-          return (v * 1000000000000).toFixed(0) + ' pɱ';
+          return (v * 1000000000000).toFixed(1) + ' pɱ';
         }
-        return (v * 1000000000).toFixed(0) + ' nɱ';
+        return (v * 1000000000).toFixed(1) + ' nɱ';
       }
-      return (v * 1000000).toFixed(0) + ' µɱ';
+      return (v * 1000000).toFixed(1) + ' µɱ';
     }
-    return (v * 1000).toFixed(0) + ' mɱ';
+    return (v * 1000).toFixed(1) + ' mɱ';
   }
   return v.toFixed(2) + ' ɱ';
 }
