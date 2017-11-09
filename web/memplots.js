@@ -1,5 +1,6 @@
-function drawTimeline(el, graphs, options) {
+var timespan;
 
+function drawTimeline(el, graphs, options) {
   el.parent().resizable({
     minWidth: 300,
     maxWidth: 1200,
@@ -46,13 +47,19 @@ function drawTimeline(el, graphs, options) {
   });
 
   fetchAndPlot();
-  setTimeout(fetchAndPlot, 120000);
+  setTimeout(fetchAndPlot, 30000);
+  $('#timespan input[name="timespan"]').bind('change', function onTimespanChange() {
+    var tsp = getTimespan($(this).val());
+    timespan = tsp[0];
+    window.location.hash = '#' + tsp[1];
+    fetchAndPlot();
+  });
 
   function fetchAndPlot() {
     var promises = [];
     var p;
 
-    graphs.forEach(function(gr) {
+    _.forEach(graphs, function(gr) {
       p = $.ajax({
         url: gr.url,
         success: function onDataRcv(result) {
@@ -69,11 +76,16 @@ function drawTimeline(el, graphs, options) {
 
     $.when.apply($, promises).done(function onAllDataRcv() {
       var datasets = [];
-      graphs.forEach(function(gr) { datasets.push(gr.dataset); });
+      var now = new Date();
+      _.forEach(graphs, function(gr) {
+        gr.dataset.data = _.dropWhile(gr.dataset.data, function inSpan(item) { return item[0] < now - timespan; });
+        options.xaxis.minTickSize[0] = timespan / (1000 * 60 * 60) / ($(document).width() > 500 ? 6 : 4);
+        datasets.push(gr.dataset);
+      });
       datasets.sort(cmpIndex);
       el.plot(datasets, options);
     });
-    setTimeout(fetchAndPlot, 120000);
+    setTimeout(fetchAndPlot, 30000);
   }
 }
 
@@ -104,6 +116,9 @@ function drawTimelines(rootUrl) {
     ],
     legend: { position: 'nw' }
   };
+  var tsp = getTimespan(window.location.hash);
+  timespan = tsp[0];
+  $('#timespan input[name="timespan"][value="' + tsp[1] + '"]').attr('checked', true);
 
   drawTimeline(
     $('#txns'),
@@ -189,4 +204,11 @@ function kBFormatter(v) {
 
 function cmpIndex(a, b) {
   return (a.index - b.index) || 0;
+}
+
+function getTimespan(val) {
+  var result = /^#?(24|12|4|1)h$/.exec(val);
+  var hrs = 12;
+  if (result) hrs = parseInt(result[1]) || hrs;
+  return [hrs * 60 * 60  * 1000, hrs + 'h'];
 }
