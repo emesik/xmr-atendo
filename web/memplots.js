@@ -46,14 +46,19 @@ function drawTimeline(el, graphs, options) {
     $('#tooltip').show();
   });
 
-  fetchAndPlot();
-  setTimeout(fetchAndPlot, 30000);
+  plotLoop();
+
   $('#timespan input[name="timespan"]').bind('change', function onTimespanChange() {
     var tsp = getTimespan($(this).val());
     timespan = tsp[0];
     window.location.hash = '#' + tsp[1];
     fetchAndPlot();
   });
+
+  function plotLoop() {
+    fetchAndPlot();
+    setTimeout(plotLoop, 60000);
+  }
 
   function fetchAndPlot() {
     var promises = [];
@@ -85,7 +90,6 @@ function drawTimeline(el, graphs, options) {
       datasets.sort(cmpIndex);
       el.plot(datasets, options);
     });
-    setTimeout(fetchAndPlot, 30000);
   }
 }
 
