@@ -2,35 +2,39 @@
 @afterglow: rgba(76, 76, 76, 1);
 @link:      rgba(0, 98, 163, 1);
 @text:      rgba(47, 19, 0, 1);
-@textbg:    rgba(255, 241, 231, 1);
+@textbg:    rgba(255, 253, 249, 1);
 html {
-    background-color: @textbg;
     color: @text;
     font-face: sans-serif;
     font-size: 12pt;
 }
-h2 {
-    font-size: 120%;
-    font-weight: bold;
-    margin-top: 20px;
+body {
+    background-color: @textbg;
 }
 fieldset {
   margin-top: 20px;
 }
+figcaption.figure-caption {
+  color: @afterglow;
+}
+.align-to-label {
+  margin-left: 54px;
+}
 .plot-wrapper {
-    border: 1px solid @afterglow;
-    padding: 10px;
+    margin-bottom: 10px;
 }
 .plot {
     height: 400px;
+    width: 100%;
 }
 #tooltip {
     position: absolute;
     display: none;
-    border: 3px solid transparent;
+    border: 1px solid @glow;
     border-radius: 4px;
-    padding: 2px;
+    padding: 2px 6px;
     background-color: @textbg;
+    box-shadow: 4px 4px 10px @afterglow;
     opacity: 0.9;
     .date {
       display: block;

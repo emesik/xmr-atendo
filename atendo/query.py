@@ -8,11 +8,16 @@ from .txndb import Txn, TxnStat
 class Query(object):
     when = None
     _stats = None
+    _hists = {}
 
-    def __init__(self, dbsession, periods, bins=20):
+    def __init__(self, dbsession, periods, maxtimeline=None, bins=20):
         self.dbsession = dbsession
         self.periods = periods
         self.bins = bins
+        if maxtimeline:
+            self._maxtimelinerange = periods[maxtimeline]
+        else:
+            self._maxtimelinerange = max(periods.values())
 
     def get_timeline(self, prop):
         if not self._stats:
@@ -20,6 +25,8 @@ class Query(object):
         return {'timestamp': int(self.when.timestamp()), 'data': self.timelinegen(prop)}
 
     def get_hists(self, prop, period):
+        if not self._stats:
+            self.fetch_data()
         try:
             return self._hists[period][prop]
         except KeyError:
@@ -27,10 +34,8 @@ class Query(object):
 
     def fetch_data(self, when=None):
         self.when = when or datetime.now()
-        maxperiod = max(self.periods.values())
-
         stats = self.dbsession.query(TxnStat) \
-            .filter(TxnStat.queried > self.when - timedelta(seconds=maxperiod)) \
+            .filter(TxnStat.queried > self.when - timedelta(seconds=self._maxtimelinerange)) \
             .order_by(TxnStat.queried)
         self._stats = list(map(operator.attrgetter('__dict__'), stats.all()))
 

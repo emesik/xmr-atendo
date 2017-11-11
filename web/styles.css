@@ -1,31 +1,35 @@
 html {
-  background-color: #fff1e7;
   color: #2f1300;
   font-face: sans-serif;
   font-size: 12pt;
 }
-h2 {
-  font-size: 120%;
-  font-weight: bold;
-  margin-top: 20px;
+body {
+  background-color: #fffdf9;
 }
 fieldset {
   margin-top: 20px;
 }
+figcaption.figure-caption {
+  color: #4c4c4c;
+}
+.align-to-label {
+  margin-left: 54px;
+}
 .plot-wrapper {
-  border: 1px solid #4c4c4c;
-  padding: 10px;
+  margin-bottom: 10px;
 }
 .plot {
   height: 400px;
+  width: 100%;
 }
 #tooltip {
   position: absolute;
   display: none;
-  border: 3px solid transparent;
+  border: 1px solid #ff6600;
   border-radius: 4px;
-  padding: 2px;
-  background-color: #fff1e7;
+  padding: 2px 6px;
+  background-color: #fffdf9;
+  box-shadow: 4px 4px 10px #4c4c4c;
   opacity: 0.9;
 }
 #tooltip .date {

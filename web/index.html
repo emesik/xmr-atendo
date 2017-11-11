@@ -34,30 +34,31 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-12 text-center">
-                    <form id="timespan">
+                <div class="col-12">
+                    <h2>Timelines</h2>
+                    <form id="timeline-span" class="text-center">
                         <fieldset class="form-group">
                             <div class="form-check form-check-inline">
-                                <label for="timediv-24h" class="form-check-label">
-                                    <input id="timespan-24h" class="form-check-input" type="radio" name="timespan" value="24h" />
+                                <label for="timeline-span-24h" class="form-check-label">
+                                    <input id="timeline-span-24h" class="form-check-input" type="radio" name="timeline-span" value="24h" />
                                     24h
                                 </label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <label for="timespan-12h" class="form-check-label">
-                                    <input id="timespan-12h" class="form-check-input" type="radio" name="timespan" value="12h" />
+                                <label for="timeline-span-12h" class="form-check-label">
+                                    <input id="timeline-span-12h" class="form-check-input" type="radio" name="timeline-span" value="12h" />
                                     12h
                                 </label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <label for="timespan-4h" class="form-check-label">
-                                    <input id="timespan-4h" class="form-check-input" type="radio" name="timespan" value="4h" />
+                                <label for="timeline-span-4h" class="form-check-label">
+                                    <input id="timeline-span-4h" class="form-check-input" type="radio" name="timeline-span" value="4h" />
                                     4h
                                 </label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <label for="timespan-1h" class="form-check-label">
-                                    <input id="timespan-1h" class="form-check-input" type="radio" name="timespan" value="1h" />
+                                <label for="timeline-span-1h" class="form-check-label">
+                                    <input id="timeline-span-1h" class="form-check-input" type="radio" name="timeline-span" value="1h" />
                                     1h
                                 </label>
                             </div>
@@ -67,33 +68,92 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    <h2>Number of transactions in the mempool</h2>
-                    <div class="plot-wrapper ui-resizable"><div id="txns" class="plot"></div></div>
+                    <figure>
+                        <figcaption class="figure-caption align-to-label">Number of transactions in the mempool</figcaption>
+                        <div class="plot-wrapper ui-resizable"><div id="txns" class="plot"></div></div>
+                    </figure>
                 </div>
             </div>
             <div class="row">
                 <div class="col-12">
-                    <h2>Total size and fee of transactions in the mempool</h2>
-                    <div class="plot-wrapper"><div id="totals" class="plot"></div></div>
+                    <figure>
+                        <figcaption class="figure-caption align-to-label">Total size and fee of transactions in the mempool</figcaption>
+                        <div class="plot-wrapper"><div id="totals" class="plot"></div></div>
+                    </figure>
                 </div>
             </div>
             <div class="row">
                 <div class="col-12">
-                    <h2>Average size and fee of transaction</h2>
-                    <div class="plot-wrapper"><div id="averages" class="plot"></div></div>
+                    <figure>
+                        <figcaption class="figure-caption align-to-label">Average size and fee of transaction</figcaption>
+                        <div class="plot-wrapper"><div id="averages" class="plot"></div></div>
+                    </figure>
                 </div>
             </div>
             <div class="row">
                 <div class="col-12">
-                    <h2>Average fee per kB</h2>
-                    <div class="plot-wrapper"><div id="perkb" class="plot"></div></div>
+                    <figure>
+                        <figcaption class="figure-caption align-to-label">Average fee per kB</figcaption>
+                        <div class="plot-wrapper"><div id="perkb" class="plot"></div></div>
+                    </figure>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h2>Inputs, outputs and ring size</h2>
+                    <form id="histogram-span" class="text-center">
+                        <fieldset class="form-group">
+                            <div class="form-check form-check-inline">
+                                <label for="histogram-span-1w" class="form-check-label">
+                                    <input id="histogram-span-1w" class="form-check-input" type="radio" name="histogram-span" value="1w" />
+                                    1 week
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <label for="histogram-span-1d" class="form-check-label">
+                                    <input id="histogram-span-1d" class="form-check-input" type="radio" name="histogram-span" value="1d" />
+                                    24h
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <label for="histogram-span-1h" class="form-check-label">
+                                    <input id="histogram-span-1h" class="form-check-input" type="radio" name="histogram-span" value="1h" />
+                                    1h
+                                </label>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <figure>
+                        <figcaption class="figure-caption align-to-label">Number of inputs</figcaption>
+                        <div class="plot-wrapper ui-resizable"><div id="inputs" class="plot"></div></div>
+                    </figure>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <figure>
+                        <figcaption class="figure-caption align-to-label">Number of outputs</figcaption>
+                        <div class="plot-wrapper ui-resizable"><div id="outputs" class="plot"></div></div>
+                    </figure>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <figure>
+                        <figcaption class="figure-caption align-to-label">Ring size</figcaption>
+                        <div class="plot-wrapper ui-resizable"><div id="ring" class="plot"></div></div>
+                    </figure>
                 </div>
             </div>
             <div class="row">
                 <div class="col-12" id="footer">
                     <img class="qr small float-left" src="qrcode-mempool.png"
                         alt="4DHKLPmWW8aBoEbSyzKVbbDRmc8nsnpZLUpQBYvhUxs3KVrodnaFaBEQMDp69u4VaiEG3LSQXA6M61mXPrztCLuhANHcFpVzv5CDHpmdvF" />
-                    <div class="float-left w100 pt10">
+                    <div class="float-left pt10">
                         <p>
                         Like the graphs? Please donate!<br />
                         <small class="xmraddr">4DHKLPmWW8aBoEbSyzKVbbDRmc8nsnpZLUpQBYvhUxs3KVrodnaFaBEQMDp69u4VaiEG3LSQXA6M61mXPrztCLuhANHcFpVzv5CDHpmdvF</small>
@@ -117,10 +177,12 @@
         <script src="memplots.js"></script>
         <script>
             $(document).ready(function() {
-                drawTimelines('https://pooldata.xmrlab.com/xmr/',
-                    $('#txns'), $('#totals'), $('#averages'), $('#perkb'));
+                var rootUrl = '/xmr/';
+                drawTimelines(rootUrl);
+                drawHistograms(rootUrl);
             });
         </script>
         <script async defer src="https://buttons.github.io/buttons.js"></script>
+        <div id="tooltip"></div>
     </body>
 </html>
