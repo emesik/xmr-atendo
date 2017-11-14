@@ -8,8 +8,11 @@ var resizableParams = {
   minHeight: 300,
   maxHeight: 400
 };
+var tooltip;
 
 function drawTimeline(el, graphs, options) {
+  var tooltipTimeout = null;
+
   el.parent().resizable(resizableParams);
   el.bind('plothover', function onPlotHover(evt, pos, item) {
     var date;
@@ -19,19 +22,16 @@ function drawTimeline(el, graphs, options) {
     var gr;
     var dat;
     var val;
-    if (!item) {
-      $('#tooltip').hide();
-      return;
-    }
-    tstamp = item.datapoint[0];
-    date = new Date(tstamp).toUTCString();
+    var xpos;
+
     for (var i = 0; i < graphs.length; i++) {
       gr = graphs[i];
       dat = gr.dataset.data;
       yaxis = options.yaxes[(gr.yaxis || 1) - 1];
       val = null;
       for (var j = 0; j < dat.length; j++) {
-        if (dat[j][0] == tstamp) {
+        if (dat[j][0] >= pos.x) {
+          tstamp = tstamp || dat[j][0];
           val = dat[j][1];
           break;
         }
@@ -42,12 +42,20 @@ function drawTimeline(el, graphs, options) {
         vals.push('—');
       }
     }
-    $("#tooltip").html('<span class="value">' + vals.join('/') + '</span><span class="date">' + date + '</span>')
-      .css({
-        top: item.pageY - 55,
-        left: item.pageX + 5
-      });
-    $('#tooltip').show();
+    if (tstamp) {
+      date = new Date(tstamp).toUTCString();
+      xpos = $(document).width() - pos.pageX > 150 ? pos.pageX + 5 : pos.pageX - 200;
+      tooltip.html('<span class="value">' + vals.join('/') + '</span><span class="date">' + date + '</span>')
+        .css({
+          top: pos.pageY - 65,
+          left: xpos
+        });
+      if (tooltipTimeout) clearTimeout(tooltipTimeout);
+      tooltip.show();
+      tooltipTimeout = setTimeout(function() { tooltip.hide(); }, 2000);
+    } else {
+      tooltip.hide();
+    }
   });
 
   plotLoop();
@@ -117,16 +125,16 @@ function drawHistogram(rootUrl, dataName, tooltipFormatter) {
   el.bind('plothover', function onPlotHover(evt, pos, item) {
     var xpos;
     if (!item) {
-      $('#tooltip').hide();
+      tooltip.hide();
       return;
     }
     xpos = $(document).width() - item.pageX > 100 ? item.pageX + 5 : item.pageX - 150;
-    $('#tooltip').html('<span class="value">' + tooltipFormatter(item.datapoint) + '</span>')
+    tooltip.html('<span class="value">' + tooltipFormatter(item.datapoint) + '</span>')
       .css({
         top: item.pageY - 55,
         left: xpos
       });
-    $('#tooltip').show();
+    tooltip.show();
   });
 
   plotLoop();
@@ -174,7 +182,8 @@ function drawTimelines(rootUrl) {
   };
   var twoAxisOpts = {
     colors: colors,
-    grid: { hoverable: true },
+    grid: { hoverable: true, autoHighlight: false },
+    crosshair: { mode: 'x', color: '#0062a3', lineWidth: 1 },
     xaxis: xAxisOptions,
     yaxes: [
       {
@@ -200,7 +209,8 @@ function drawTimelines(rootUrl) {
     $('#txns'),
     [ { url: rootUrl + 'timeline-txns.json' } ],
     { colors: colors,
-      grid: { hoverable: true },
+      grid: { hoverable: true, autoHighlight: false },
+      crosshair: { mode: 'x', color: '#0062a3', lineWidth: 1 },
       xaxis: xAxisOptions,
       yaxes: [
         { reserveSpace: true,
@@ -238,7 +248,8 @@ function drawTimelines(rootUrl) {
         yaxis: 2,
         index: 10 }],
     { colors: colors,
-      grid: { hoverable: true },
+      grid: { hoverable: true, autoHighlight: false },
+      crosshair: { mode: 'x', color: '#0062a3', lineWidth: 1 },
       xaxis: xAxisOptions,
       yaxes: [ {
           reserveSpace: true,
@@ -279,6 +290,12 @@ function drawHistograms(rootUrl) {
         ' with ' + dpt[0] + ' ring size';
     }
   );
+}
+
+function drawPlots(rootUrl) {
+  tooltip = $('#tooltip');
+  drawTimelines(rootUrl);
+  drawHistograms(rootUrl);
 }
 
 // functions
