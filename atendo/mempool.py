@@ -2,16 +2,20 @@ from datetime import datetime
 from decimal import Decimal
 import json
 import logging
+import re
 import requests
 
 class MemPool(object):
+    _clean = re.compile(r'"tx_blob"\s*:\s*"(\\.|[^"\\]+)*"\s*,')
+
     def __init__(self, host, port=18081):
         self.url = 'http://{host}:{port}/get_transaction_pool'.format(host=host, port=port)
         self._log = logging.getLogger(__name__)
 
     def refresh(self):
         req = requests.post(self.url, headers={'Content-Type': 'application/json'})
-        self._raw_data = req.json()
+        cleantext = self._clean.sub('', req.text)
+        self._raw_data = json.loads(cleantext)
         try:
             return self._process()
         except Exception:
