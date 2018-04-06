@@ -26,7 +26,7 @@ class TxnStat(Base):
     avgsize = Column(Integer, nullable=False)
     avgfee = Column(Numeric(precision=24, scale=12), nullable=True)
     avgfeeperkb = Column(Numeric(precision=24, scale=12), nullable=True)
-    maxage = Column(Numeric(precision=16, scale=8), nullable=False)
+    maxage = Column(Numeric(precision=24, scale=12), nullable=False)
 
 
 def create_tables(url):
