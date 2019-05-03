@@ -6,14 +6,17 @@ import re
 import requests
 
 class MemPool(object):
+    timeout = 20
     _clean = re.compile(r'"tx_blob"\s*:\s*"(\\.|[^"\\]+)*"\s*,')
 
-    def __init__(self, host, port=18081):
+    def __init__(self, host, port=18081, timeout=None):
         self.url = 'http://{host}:{port}/get_transaction_pool'.format(host=host, port=port)
+        self.timeout = self.timeout or timeout
         self._log = logging.getLogger(__name__)
 
     def refresh(self):
-        req = requests.post(self.url, headers={'Content-Type': 'application/json'})
+        req = requests.post(
+            self.url, headers={'Content-Type': 'application/json'}, timeout=self.timeout)
         cleantext = self._clean.sub('', req.text)
         self._raw_data = json.loads(cleantext)
         try:

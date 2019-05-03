@@ -25,7 +25,10 @@ if loop:
     def fetch():
         log.debug("fetching data")
         s.enter(loop, 1, fetch)
-        atendo.fetch()
+        try:
+            atendo.fetch()
+        except Exception:
+            log.exception("Fetch failed")
 
     log.info("Will fetch data every {0} second(s)".format(loop))
     s = sched.scheduler(time.time, time.sleep)

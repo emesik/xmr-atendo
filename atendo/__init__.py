@@ -1,13 +1,14 @@
 from datetime import datetime
-from decimal import Decimal, getcontext
+from decimal import Decimal
 from .mempool import MemPool
 from .txndb import mksession, Txn, TxnStat
 
 PICONERO = Decimal('0.000000000001')
 
 class Atendo(object):
-    def __init__(self, daemon_host='127.0.0.1', daemon_port=18081, db_url='sqlite://atendo.db'):
-        self.mempool = MemPool(host=daemon_host, port=daemon_port)
+    def __init__(self, daemon_host='127.0.0.1', daemon_port=18081, db_url='sqlite://atendo.db',
+            timeout=None):
+        self.mempool = MemPool(host=daemon_host, port=daemon_port, timeout=timeout)
         self.dbsession = mksession(db_url)
 
     def fetch(self):
