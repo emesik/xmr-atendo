@@ -18,7 +18,8 @@ except KeyError:
 atendo = Atendo(
     daemon_host=config.get('daemon_host', None),
     daemon_port=config.get('daemon_port', None),
-    db_url=config.get('db_url', None)
+    db_url=config.get('db_url', None),
+    timeout=config.get('timeout', 20)
     )
 
 if loop:
