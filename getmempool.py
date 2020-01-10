@@ -1,5 +1,4 @@
 #!/usr/bin/python
-import json
 import logging
 import sched
 import sys
